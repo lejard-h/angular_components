@@ -314,6 +314,7 @@ more details.
 * Fix `material-paper-tooltip` content that are change detected and using
   deferred content by having the visible property be set in an async manner so
   that the value isn't added in the middle of a change detection loop.
+* Allow custom tooltip show delay using `materialTooltipDelayToken`.
 
 #### Material Yes/No Buttons
 * Remove `Visibility.all`.

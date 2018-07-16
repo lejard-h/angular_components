@@ -16,7 +16,8 @@ import 'package:angular_components/utils/disposer/disposer.dart';
 import 'ink_tooltip.dart';
 import 'ink_tooltip.template.dart' as ng;
 import 'tooltip_controller.dart';
-import 'tooltip_source.dart' show tooltipShowDelay;
+import 'tooltip_source.dart'
+    show defaultTooltipShowDelay, materialTooltipDelayToken;
 import 'tooltip_target.dart';
 
 /// An ink-based tooltip which can be attached to any element.
@@ -45,16 +46,20 @@ class MaterialTooltipDirective extends TooltipTarget
   ComponentRef _componentRef;
 
   MaterialTooltipDirective(
-      DomPopupSourceFactory domPopupSourceFactory,
-      ViewContainerRef viewContainerRef,
-      HtmlElement element,
-      this._viewLoader,
-      this._changeDetector,
-      this._window)
-      : this.element = element,
+    DomPopupSourceFactory domPopupSourceFactory,
+    ViewContainerRef viewContainerRef,
+    HtmlElement element,
+    this._viewLoader,
+    this._changeDetector,
+    this._window,
+    @Optional() @Inject(materialTooltipDelayToken) Duration tooltipShowDelay,
+  )   : this.element = element,
         super(domPopupSourceFactory, viewContainerRef, element) {
     inLongPress = false;
-    _delayedActivate = new DelayedAction(tooltipShowDelay, _activate);
+    _delayedActivate = new DelayedAction(
+      tooltipShowDelay ?? defaultTooltipShowDelay,
+      _activate,
+    );
   }
 
   void _attachHostListeners() {

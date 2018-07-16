@@ -12,7 +12,8 @@ import 'package:angular_components/src/material_tooltip/tooltip_controller.dart'
 import 'package:angular_components/model/action/delayed_action.dart';
 import 'package:angular_components/utils/browser/events/events.dart';
 
-import 'tooltip_source.dart' show tooltipShowDelay;
+import 'tooltip_source.dart'
+    show defaultTooltipShowDelay, materialTooltipDelayToken;
 
 /// A directive that marks the target of a tooltip and handles showing and
 /// hiding a tooltip on hover, click, enter, and space.
@@ -31,12 +32,18 @@ class MaterialTooltipTargetDirective extends TooltipBehavior
   HtmlElement element;
 
   MaterialTooltipTargetDirective(
-      DomPopupSourceFactory domPopupSourceFactory,
-      ViewContainerRef viewContainerRef,
-      HtmlElement element,
-      ChangeDetectorRef changeDetector)
-      : super(
-            domPopupSourceFactory, viewContainerRef, element, changeDetector) {
+    DomPopupSourceFactory domPopupSourceFactory,
+    ViewContainerRef viewContainerRef,
+    HtmlElement element,
+    ChangeDetectorRef changeDetector,
+    @Optional() @Inject(materialTooltipDelayToken) Duration tooltipShowDelay,
+  ) : super(
+          domPopupSourceFactory,
+          viewContainerRef,
+          element,
+          changeDetector,
+          tooltipShowDelay,
+        ) {
     this.element = element;
   }
 
@@ -61,12 +68,16 @@ abstract class TooltipBehavior extends TooltipTarget {
   Stream<bool> get tooltipActivate => _tooltipActivate.stream.distinct();
 
   TooltipBehavior(
-      DomPopupSourceFactory domPopupSourceFactory,
-      ViewContainerRef viewContainerRef,
-      HtmlElement element,
-      this._changeDetector)
-      : super(domPopupSourceFactory, viewContainerRef, element) {
-    _show = new DelayedAction(tooltipShowDelay, showTooltip);
+    DomPopupSourceFactory domPopupSourceFactory,
+    ViewContainerRef viewContainerRef,
+    HtmlElement element,
+    this._changeDetector,
+    @Optional() @Inject(materialTooltipDelayToken) Duration tooltipShowDelay,
+  ) : super(domPopupSourceFactory, viewContainerRef, element) {
+    _show = new DelayedAction(
+      tooltipShowDelay ?? defaultTooltipShowDelay,
+      showTooltip,
+    );
   }
 
   @HostListener('keyup')
@@ -127,12 +138,18 @@ class ClickableTooltipTargetDirective extends TooltipBehavior
   bool _tooltipVisible = false;
 
   ClickableTooltipTargetDirective(
-      DomPopupSourceFactory domPopupSourceFactory,
-      ViewContainerRef viewContainerRef,
-      HtmlElement element,
-      ChangeDetectorRef changeDetector)
-      : super(
-            domPopupSourceFactory, viewContainerRef, element, changeDetector) {
+    DomPopupSourceFactory domPopupSourceFactory,
+    ViewContainerRef viewContainerRef,
+    HtmlElement element,
+    ChangeDetectorRef changeDetector,
+    @Optional() @Inject(materialTooltipDelayToken) Duration tooltipShowDelay,
+  ) : super(
+          domPopupSourceFactory,
+          viewContainerRef,
+          element,
+          changeDetector,
+          tooltipShowDelay,
+        ) {
     this.element = element;
     _tooltipSubscription = tooltipActivate.listen((visible) {
       _tooltipVisible = visible;
